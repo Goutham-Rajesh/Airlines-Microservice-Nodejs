@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - airlines-information
+      - flight-information
+      - passenger-information
+
+  airlines-information:
+    build:
+      context: ./airlines-information
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+
+  flight-information:
+    build:
+      context: ./flight-information
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb
+
+  passenger-information:
+    build:
+      context: ./passenger-information
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: pass@word1
+      MYSQL_DATABASE: airlinesdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
+  mongodb-data:

@@ -7,7 +7,7 @@ const axios = require('axios');
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: '127.0.0.1',
+    host: 'mysql',
     user: 'root',
     password: 'pass@word1',
     database: 'airlinesdb'
@@ -46,6 +46,15 @@ function setupRoutes(){
         })
     });
 
+    app.get('/airlines/:id/flights', async (req, res) => {
+        try {
+            const airlineId = req.params.id;
+            const response = await axios.get(`http://flight-information:3002/flight/airlines/${airlineId}`);
+            res.json(response.data);
+        } catch (error) {
+            res.status(500).json({ error: 'Error fetching flights data' });
+        }
+    });
 
     app.post('/airlines', (req,res)=> {
         const { name, country} = req.body;
